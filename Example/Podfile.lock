@@ -1,0 +1,42 @@
+PODS:
+  - DividableRange (0.1.1)
+  - FBSnapshotTestCase (2.1.4):
+    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
+  - FBSnapshotTestCase/Core (2.1.4)
+  - FBSnapshotTestCase/SwiftSupport (2.1.4):
+    - FBSnapshotTestCase/Core
+  - LazySeq (0.5.5):
+    - DividableRange (~> 0.1)
+  - Nimble (7.0.2)
+  - Nimble-Snapshots (6.3.0):
+    - Nimble-Snapshots/Core (= 6.3.0)
+  - Nimble-Snapshots/Core (6.3.0):
+    - FBSnapshotTestCase (~> 2.0)
+    - Nimble (~> 7.0)
+  - Observed (0.1.0):
+    - LazySeq
+  - Quick (1.2.0)
+
+DEPENDENCIES:
+  - FBSnapshotTestCase (~> 2.1.4)
+  - Nimble (~> 7.0.2)
+  - Nimble-Snapshots (~> 6.3.0)
+  - Observed (from `../`)
+  - Quick (~> 1.2.0)
+
+EXTERNAL SOURCES:
+  Observed:
+    :path: ../
+
+SPEC CHECKSUMS:
+  DividableRange: 1d855fc59a834f36a13f2b1c53cc69f2f0291b04
+  FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  LazySeq: f91594c4af192daa612dfde4f8eec38ea20bf32e
+  Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
+  Nimble-Snapshots: f5459b5b091678dc942d03ec4741cacb58ba4a52
+  Observed: 566d71c11ed8aaff9efd5440c7218891e460b1fb
+  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
+
+PODFILE CHECKSUM: da40ea1f0510a5263e23354f52777a8a24d63827
+
+COCOAPODS: 1.3.1

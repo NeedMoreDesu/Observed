@@ -301,10 +301,14 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Observed_Example/Pods-Observed_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/DividableRange/DividableRange.framework",
+				"${BUILT_PRODUCTS_DIR}/LazySeq/LazySeq.framework",
 				"${BUILT_PRODUCTS_DIR}/Observed/Observed.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DividableRange.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LazySeq.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Observed.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
