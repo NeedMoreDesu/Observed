@@ -12,9 +12,5 @@ public class Observed<ObjectType, ObserverType> {
         self.obj = obj
         self.observer = observer
     }
-
-//    public func subscribeTo<TargetObjectType, TargetObserverType>(_ observed: Observed<TargetObjectType, TargetObserverType>) {
-//        assertionFailure("Cannot subscribe Observer<\(ObjectType.self),\(ObserverType.self)> to Observer<\(TargetObjectType.self), \(TargetObserverType.self)>")
-//    }
 }
 

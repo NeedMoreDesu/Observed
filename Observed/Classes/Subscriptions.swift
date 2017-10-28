@@ -49,12 +49,12 @@ public class Subscription2d {
         let row: Int
         let column: Int
     }
-    public typealias Fn = (_ deletions: [Index], _ insertions: [Index], _ updates: [Index], _ sectionDeletions: [Int], _ sectionInsertions: [Int]) -> DeleteOrKeep
+    public typealias Fn = (_ deletions: [Index], _ insertions: [Index], _ updates: [Index], _ sectionDeletions: [Int], _ sectionInsertions: [Int], _ sectionUpdates: [Int]) -> DeleteOrKeep
     private var fns = MutableArrayReference<Fn>()
     
-    public func update(deletions: [Index], insertions: [Index], updates: [Index], sectionDeletions: [Int], sectionInsertions: [Int]) {
+    public func update(deletions: [Index], insertions: [Index], updates: [Index], sectionDeletions: [Int], sectionInsertions: [Int], sectionUpdates: [Int]) {
         fns.array = fns.array.filter { (fn) -> Bool in
-            return fn(deletions, insertions, updates, sectionDeletions, sectionInsertions) == .keep
+            return fn(deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates) == .keep
         }
     }
     public func subscribe(_ fn: @escaping Fn) {

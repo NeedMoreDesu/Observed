@@ -19,11 +19,14 @@ class ViewController: UIViewController {
         let b = a.map({ (wholeObj) -> String in
             return "\(wholeObj.count) count"
         })
-        b.subscribeTo(a)
+        let bb = b.map { (_) -> String in
+            return "asdf"
+        }
+//        b.subscribeTo(a)
         let c = a.map1d({ (justOneObj) -> String in
             return "\(justOneObj)obj"
         })
-        c.subscribeTo(a)
+//        c.subscribeTo(a)
         
         b.observer.fullUpdate.subscribe { () -> DeleteOrKeep in
             print("\(b.obj)")

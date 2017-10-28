@@ -8,32 +8,33 @@
 import Foundation
 import LazySeq
 
-public class Observer2d: ObserverDefault {
-    public let changes = Subscription1d()
-}
-
-extension Observed where ObjectType: Collection, ObjectType.Element: Collection {
-    public typealias Type2d = Type1d.Element
-    
-    public func map2d<ReturnType>(_ transform: @escaping (Type2d) -> ReturnType, noStore: Bool = false, noStoreSections: Bool = false) -> Observed<GeneratedSeq<GeneratedSeq<ReturnType>>, Observer2d> {
-        let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
-        var outputSeq = inputSeq.map { (row) -> GeneratedSeq<ReturnType> in
-            let inputSeq = row as? GeneratedSeq<Type2d> ?? row.generatedSeq()
-            var outputSeq = inputSeq.map(transform)
-            if !noStore {
-                outputSeq = outputSeq.lazySeq()
-            }
-            return outputSeq
-        }
-        if(!noStoreSections) {
-            outputSeq = outputSeq.lazySeq()
-        }
-        let observed = Observed<GeneratedSeq<GeneratedSeq<ReturnType>>, Observer2d>(obj: outputSeq, observer: Observer2d())
-//        observed.subscribeTo(self)
-        return observed
-    }
-}
+//public class Observer2d: ObserverDefault {
+//    public let changes = Subscription2d()
+//}
 //
+//extension Observed where ObjectType: Collection, ObjectType.Element: Collection {
+//    public typealias Type2d = Type1d.Element
+//
+//    public func map2d<ReturnType>(_ transform: @escaping (Type2d) -> ReturnType, noStore: Bool = false, noStoreSections: Bool = false) -> Observed<GeneratedSeq<GeneratedSeq<ReturnType>>, Observer2d> {
+//        let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
+//        var outputSeq = inputSeq.map { (row) -> GeneratedSeq<ReturnType> in
+//            let inputSeq = row as? GeneratedSeq<Type2d> ?? row.generatedSeq()
+//            var outputSeq = inputSeq.map(transform)
+//            if !noStore {
+//                outputSeq = outputSeq.lazySeq()
+//            }
+//            return outputSeq
+//        }
+//        if(!noStoreSections) {
+//            outputSeq = outputSeq.lazySeq()
+//        }
+//        let observed = Observed<GeneratedSeq<GeneratedSeq<ReturnType>>, Observer2d>(obj: outputSeq, observer: Observer2d())
+////        observed.subscribeTo(self)
+//        return observed
+//    }
+//}
+
+
 //extension Observed where ObjectType: Collection, ObjectType.Element: Collection, ObserverType == Observer2d {
 //    public func subscribeDefault<ResultType>(observed: ObservedLazySeq<GeneratedSeq<GeneratedSeq<ResultType>>>) {
 //        self.fullReloadFn = { [weak self] in
