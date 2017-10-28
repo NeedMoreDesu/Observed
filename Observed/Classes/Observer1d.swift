@@ -17,9 +17,7 @@ public class Observer1d: Observer0d {
                 return .delete
             }
             Resetable.downgradeReset0d(obj: observed.obj)
-            if let observer = observed.observer as? Observer0d {
-                observer.fullUpdate.update()
-            }
+            observed.observer.fullUpdate.update()
             return .keep
         }
         self.changes.subscribe { [weak observed] (deletions, insertions, updates) -> DeleteOrKeep in
@@ -29,8 +27,8 @@ public class Observer1d: Observer0d {
             Resetable.downgradeReset1d(obj: observed.obj, deletions: deletions, insertions: insertions, updates: updates)
             if let observer = observed.observer as? Observer1d {
                 observer.changes.update(deletions: deletions, insertions: insertions, updates: updates)
-            } else if let observer = observed.observer as? Observer0d {
-                observer.fullUpdate.update()
+            } else {
+                observed.observer.fullUpdate.update()
             }
 
             return .keep

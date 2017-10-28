@@ -17,9 +17,7 @@ public class Observer0d {
                 return .delete
             }
             Resetable.downgradeReset0d(obj: observed.obj)
-            if let observer = observed.observer as? Observer0d {
-                observer.fullUpdate.update()
-            }
+            observed.observer.fullUpdate.update()
             return .keep
         }
     }
