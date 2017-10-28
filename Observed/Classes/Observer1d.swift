@@ -49,75 +49,10 @@ extension Observed where ObjectType: Collection {
         }
         let observed = Observed<GeneratedSeq<ReturnType>, Observer1d>(obj: outputSeq, observer: Observer1d())
         self.observer.subscribe(observed)
-//        observed.subscribeTo(self.observer)
         return observed
     }
 }
 
 extension Observed where ObjectType: Collection, ObserverType == Observer1d {
-    public func subscribeTo<TargetObserverType>(_ observer: TargetObserverType) {
-        switch(observer) {
-        case is Observer1d:
-            self.subscribeTo(observer as! Observer1d)
-        default:
-            self.subscribeTo(observer as! Observer0d)
-        }
-    }
-    public func subscribeTo(_ observer: Observer0d) {
-        observer.fullUpdate.subscribe { [weak self] () -> DeleteOrKeep in
-            guard let `self` = self else {
-                return .delete
-            }
-            if let lazySeq = self.obj as? LazySeq<Type1d> {
-                lazySeq.resetStorage()
-            }
-            self.observer.fullUpdate.update()
-            return .keep
-        }
-    }
-    public func subscribeTo(_ observer: Observer1d) {
-        observer.fullUpdate.subscribe { [weak self] () -> DeleteOrKeep in
-            guard let `self` = self else {
-                return .delete
-            }
-            if let lazySeq = self.obj as? LazySeq<Type1d> {
-                lazySeq.resetStorage()
-            }
-            self.observer.fullUpdate.update()
-            return .keep
-        }
-        observer.changes.subscribe { [weak self] (deletions, insertions, updates) -> DeleteOrKeep in
-            guard let `self` = self else {
-                return .delete
-            }
-            if let lazySeq = self.obj as? LazySeq<Type1d> {
-                lazySeq.applyChanges(deletions: deletions, insertions: insertions, updates: updates)
-            }
-            self.observer.changes.update(deletions: deletions, insertions: insertions, updates: updates)
-            return .keep
-        }
-    }
-
-//    public func subscribeTo<TargetObjectType>(_ observed: Observed<TargetObjectType, Observer2d>) {
-//        observed.observer.fullUpdate.subscribe { [weak self] () -> DeleteOrKeep in
-//            guard let `self` = self else {
-//                return .delete
-//            }
-//            if let lazySeq = self.obj as? LazySeq<Type1d> {
-//                lazySeq.resetStorage()
-//            }
-//            self.observer.fullUpdate.update()
-//            return .keep
-//        }
-//        observed.observer.changes.subscribe { [weak self] (_, _, _, deletions, insertions, updates) -> DeleteOrKeep in
-//            guard let `self` = self else {
-//                return .delete
-//            }
-//            if let lazySeq = self.obj as? LazySeq<Type1d> {
-//                lazySeq.applyChanges(deletions: deletions, insertions: insertions, updates: updates)
-//            }
-//            self.observer.changes.update(deletions: deletions, insertions: insertions, updates: updates)
-//            return .keep
-//        }
-//    }
+    
 }
