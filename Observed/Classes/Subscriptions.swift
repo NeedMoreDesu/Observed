@@ -16,7 +16,12 @@ public enum DeleteOrKeep {
     case keep
 }
 
-public class SubscriptionBasic {
+public struct Index2d {
+    let row: Int
+    let section: Int
+}
+
+public class Subscription0d {
     public typealias Fn = () -> DeleteOrKeep
     private var fns = MutableArrayReference<Fn>()
 
@@ -45,14 +50,10 @@ public class Subscription1d {
 }
 
 public class Subscription2d {
-    public struct Index {
-        let row: Int
-        let column: Int
-    }
-    public typealias Fn = (_ deletions: [Index], _ insertions: [Index], _ updates: [Index], _ sectionDeletions: [Int], _ sectionInsertions: [Int], _ sectionUpdates: [Int]) -> DeleteOrKeep
+    public typealias Fn = (_ deletions: [Index2d], _ insertions: [Index2d], _ updates: [Index2d], _ sectionDeletions: [Int], _ sectionInsertions: [Int], _ sectionUpdates: [Int]) -> DeleteOrKeep
     private var fns = MutableArrayReference<Fn>()
     
-    public func update(deletions: [Index], insertions: [Index], updates: [Index], sectionDeletions: [Int], sectionInsertions: [Int], sectionUpdates: [Int]) {
+    public func update(deletions: [Index2d], insertions: [Index2d], updates: [Index2d], sectionDeletions: [Int], sectionInsertions: [Int], sectionUpdates: [Int]) {
         fns.array = fns.array.filter { (fn) -> Bool in
             return fn(deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates) == .keep
         }

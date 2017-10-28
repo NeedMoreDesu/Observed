@@ -8,30 +8,34 @@
 import Foundation
 import LazySeq
 
-public class Observer1d: ObserverDefault {
+public class Observer1d: Observer0d {
     public let changes = Subscription1d()
     
-//    override func subscribe<TargetObjectType, TargetObserverType>(_ observed: Observed<TargetObjectType, TargetObserverType>) {
-//        self.fullUpdate.subscribe { [weak observed] () -> DeleteOrKeep in
-//            guard let observed = observed else {
-//                return .delete
-//            }
-//            observed.observer.fullUpdate.update()
-//            return .keep
-//        }
-//        self.changes.subscribe { [weak observed] (deletions, insertions, updates) -> DeleteOrKeep in
-//            guard let observed = observed else {
-//                return .delete
-//            }
-//            if let observer = observed.observer as? Observer1d {
-//                observer.changes.update(deletions: deletions, insertions: insertions, updates: updates)
-//            } else {
-//                observed.observer.fullUpdate.update()
-//            }
-//
-//            return .keep
-//        }
-//    }
+    override func subscribe<TargetObjectType, TargetObserverType>(_ observed: Observed<TargetObjectType, TargetObserverType>) {
+        self.fullUpdate.subscribe { [weak observed] () -> DeleteOrKeep in
+            guard let observed = observed else {
+                return .delete
+            }
+            Resetable.downgradeReset0d(obj: observed.obj)
+            if let observer = observed.observer as? Observer0d {
+                observer.fullUpdate.update()
+            }
+            return .keep
+        }
+        self.changes.subscribe { [weak observed] (deletions, insertions, updates) -> DeleteOrKeep in
+            guard let observed = observed else {
+                return .delete
+            }
+            Resetable.downgradeReset1d(obj: observed.obj, deletions: deletions, insertions: insertions, updates: updates)
+            if let observer = observed.observer as? Observer1d {
+                observer.changes.update(deletions: deletions, insertions: insertions, updates: updates)
+            } else if let observer = observed.observer as? Observer0d {
+                observer.fullUpdate.update()
+            }
+
+            return .keep
+        }
+    }
 }
 
 extension Observed where ObjectType: Collection {
@@ -44,7 +48,8 @@ extension Observed where ObjectType: Collection {
             outputSeq = outputSeq.lazySeq()
         }
         let observed = Observed<GeneratedSeq<ReturnType>, Observer1d>(obj: outputSeq, observer: Observer1d())
-        observed.subscribeTo(self.observer)
+        self.observer.subscribe(observed)
+//        observed.subscribeTo(self.observer)
         return observed
     }
 }
@@ -55,10 +60,10 @@ extension Observed where ObjectType: Collection, ObserverType == Observer1d {
         case is Observer1d:
             self.subscribeTo(observer as! Observer1d)
         default:
-            self.subscribeTo(observer as! ObserverDefault)
+            self.subscribeTo(observer as! Observer0d)
         }
     }
-    public func subscribeTo(_ observer: ObserverDefault) {
+    public func subscribeTo(_ observer: Observer0d) {
         observer.fullUpdate.subscribe { [weak self] () -> DeleteOrKeep in
             guard let `self` = self else {
                 return .delete

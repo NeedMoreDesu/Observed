@@ -7,47 +7,52 @@
 
 import Foundation
 
-public class ObserverDefault {
-    public let fullUpdate = SubscriptionBasic()
+public class Observer0d {
+    public let fullUpdate = Subscription0d()
     public init() {}
-//
-//    func subscribe<TargetObjectType, TargetObserverType>(_ observed: Observed<TargetObjectType, TargetObserverType>) {
-//        self.fullUpdate.subscribe { [weak observed] () -> DeleteOrKeep in
-//            guard let observed = observed else {
-//                return .delete
-//            }
-//            observed.observer.fullUpdate.update()
-//            return .keep
-//        }
-//    }
+
+    func subscribe<TargetObjectType, TargetObserverType>(_ observed: Observed<TargetObjectType, TargetObserverType>) {
+        self.fullUpdate.subscribe { [weak observed] () -> DeleteOrKeep in
+            guard let observed = observed else {
+                return .delete
+            }
+            Resetable.downgradeReset0d(obj: observed.obj)
+            if let observer = observed.observer as? Observer0d {
+                observer.fullUpdate.update()
+            }
+            return .keep
+        }
+    }
 }
 
 
 
 extension Observed {
-    public func map<ReturnType>(_ transform: (ObjectType) -> ReturnType) -> Observed<ReturnType, ObserverDefault> {
-        let outputObj = transform(self.obj)
-        let observed = Observed<ReturnType, ObserverDefault>(obj: outputObj, observer: ObserverDefault())
-        observed.subscribeTo(self.observer)
+    public func map<ReturnType>(_ transform: @escaping (ObjectType) -> ReturnType) -> Observed<LazyTransform<ReturnType>, Observer0d> {
+        let outputObj = LazyTransform { return transform(self.obj) }
+        let observed = Observed<LazyTransform<ReturnType>, Observer0d>(obj: outputObj, observer: Observer0d())
+        self.observer.subscribe(observed)
+//        observed.subscribeTo(self.observer)
         return observed
     }
 }
 
-extension Observed where ObserverType == ObserverDefault {
+extension Observed where ObserverType == Observer0d {
     public func subscribeTo<TargetObserverType>(_ observer: TargetObserverType) {
         switch(observer) {
         case is Observer1d:
             self.subscribeTo(observer as! Observer1d)
         default:
-            self.subscribeTo(observer as! ObserverDefault)
+            self.subscribeTo(observer as! Observer0d)
         }
     }
     
-    public func subscribeTo(_ observer: ObserverDefault) {
+    public func subscribeTo(_ observer: Observer0d) {
         observer.fullUpdate.subscribe { [weak self] () -> DeleteOrKeep in
             guard let `self` = self else {
                 return .delete
             }
+            (self.obj as? Resetable0d)?.reset()
             self.observer.fullUpdate.update()
             return .keep
         }
@@ -58,6 +63,7 @@ extension Observed where ObserverType == ObserverDefault {
             guard let `self` = self else {
                 return .delete
             }
+            (self.obj as? Resetable0d)?.reset()
             self.observer.fullUpdate.update()
             return .keep
         }
@@ -65,6 +71,7 @@ extension Observed where ObserverType == ObserverDefault {
             guard let `self` = self else {
                 return .delete
             }
+            (self.obj as? Resetable0d)?.reset()
             self.observer.fullUpdate.update()
             return .keep
         }

@@ -5,7 +5,7 @@
 import Foundation
 import LazySeq
 
-public class Observed<ObjectType, ObserverType> {
+public class Observed<ObjectType, ObserverType: Observer0d> {
     public private(set) var obj: ObjectType
     public private(set) var observer: ObserverType
     public init(obj: ObjectType, observer: ObserverType) {
