@@ -50,5 +50,37 @@ class TableOfContentsSpec: QuickSpec {
                 }
             }
         }
+        describe("1d") {
+            var arr: [[Int]] = []
+            let gen = LazySeq(count: { () -> Int in
+                return arr.count
+            }, generate: { (section, _) -> GeneratedSeq<Int> in
+                return GeneratedSeq(count: { () -> Int in
+                    return arr[section].count
+                }, generate: { idx, _ in
+                    return arr[section][idx]
+                })
+            })
+            
+            let a = Observed(obj: gen, observer: Observer1d())
+            func cleanupState() {
+                arr = [[1, 2, 3], [40, 50], [600], [7000, 8000]]
+                a.observer.fullUpdate.update()
+            }
+            context("->2d map", {
+                let b = a.map2d({ (arg) -> Double in
+                    return Double(arg)+0.5
+                })
+                it("expected value") {
+                    cleanupState()
+                    let res: [[Double]] = b.obj.allObjects().map { $0.allObjects() }
+                    let expected = [[1.5, 2.5, 3.5], [40.5, 50.5], [600.5], [7000.5, 8000.5]]
+                    for (idx, items) in res.enumerated() {
+                        let expected = expected[idx]
+                        expect(items) == expected
+                    }
+                }
+            })
+        }
     }
 }
