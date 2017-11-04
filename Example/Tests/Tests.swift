@@ -3,46 +3,50 @@
 import Quick
 import Nimble
 import Observed
+import LazySeq
 
 class TableOfContentsSpec: QuickSpec {
     override func spec() {
-        describe("these will fail") {
-
-            it("can do maths") {
-                expect(1) == 2
+        describe("1d") {
+            var arr: [Int] = []
+            let gen = GeneratedSeq(count: { () -> Int in
+                return arr.count
+            }, generate: { idx, _ in
+                return arr[idx]
+            })
+            let a = Observed(obj: gen, observer: Observer1d())
+            func cleanupState() {
+                arr = [1, 2, 3]
+                a.observer.fullUpdate.update()
             }
-
-            it("can read") {
-                expect("number") == "string"
-            }
-
-            it("will eventually fail") {
-                expect("time").toEventually( equal("done") )
-            }
-            
-            context("these will pass") {
-
-                it("can do maths") {
-                    expect(23) == 23
+            context("->0d map") {
+                let b = a.map { (wholeObj) -> String in
+                    return "count == \(wholeObj.count)"
                 }
-
-                it("can read") {
-                    expect("🐮") == "🐮"
+                it("expectable value") {
+                    cleanupState()
+                    expect(b.obj.value()) == "count == 3"
                 }
-
-                it("will eventually pass") {
-                    var time = "passing"
-
-                    DispatchQueue.main.async {
-                        time = "done"
-                    }
-
-                    waitUntil { done in
-                        Thread.sleep(forTimeInterval: 0.5)
-                        expect(time) == "done"
-
-                        done()
-                    }
+                it("expectable updating behaviour") {
+                    cleanupState()
+                    b.observer.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                        expect(b.obj.value()) == "count == 4"
+                        return .delete
+                    })
+                    expect(b.obj.value()) == "count == 3"
+                    arr = [1, 2, 10, 20]
+                    expect(b.obj.value()) == "count == 3"
+                    a.observer.fullUpdate.update()
+                    expect(b.obj.value()) == "count == 4"
+                }
+            }
+            context("->1d map") {
+                let b = a.map1d { (justOneObj) -> String in
+                    return "\(justOneObj)obj"
+                }
+                it("expectable value") {
+                    cleanupState()
+                    expect(b.obj.allObjects()) == ["1obj", "2obj", "3obj"]
                 }
             }
         }

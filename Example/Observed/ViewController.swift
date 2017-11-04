@@ -22,30 +22,25 @@ class ViewController: UIViewController {
             return arr[idx]
         })
         let a = Observed(obj: gen, observer: Observer1d())
-        let b = a.map({ (wholeObj) -> String in
+        let b = a.map { (wholeObj) -> String in
             return "\(wholeObj.count) count"
-        })
-        let bb = b.map { (_) -> String in
-            return "asdf"
         }
-        let c = a.map1d({ (justOneObj) -> String in
+        let c = a.map1d { (justOneObj) -> String in
             return "\(justOneObj)obj"
-        })
+        }
         
-        bb.observer.fullUpdate.subscribe { () -> DeleteOrKeep in
-            print("\(bb.obj.get())")
-            return .keep
-        }
-        b.observer.fullUpdate.subscribe { () -> DeleteOrKeep in
-            print("\(b.obj.get())")
-            return .keep
-        }
+//        b.observer.fullUpdate.subscribe { () -> DeleteOrKeep in
+//            print("\(b.obj.value())")
+//            return .keep
+//        }
         c.observer.fullUpdate.subscribe { () -> DeleteOrKeep in
             print("full update: \(c.obj.allObjects())")
+            print("\(b.obj.value())")
             return .keep
         }
         c.observer.changes.subscribe { (_, _, _) -> DeleteOrKeep in
             print("update: \(c.obj.allObjects())")
+            print("\(b.obj.value())")
             return .keep
         }
         

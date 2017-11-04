@@ -7,23 +7,18 @@
 
 import Foundation
 
-public class LazyTransform<Type>: Resetable0d {
-    private var transform: (() -> Type)
-    private var value: Type?
+public class LazyTransform<Type>: GeneratedTransform<Type>, Resetable0d {
+    private var stored: Type?
     
-    public func get() -> Type {
-        if let val = self.value {
+    public override func value() -> Type {
+        if let val = self.stored {
             return val
         }
-        let val = self.transform()
-        self.value = val
+        let val = super.value()
+        self.stored = val
         return val
     }
     public func reset() {
-        self.value = nil
-    }
-    
-    public init(_ transform: @escaping (() -> Type)) {
-        self.transform = transform
+        self.stored = nil
     }
 }

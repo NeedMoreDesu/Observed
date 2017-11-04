@@ -9,22 +9,44 @@ import Foundation
 import LazySeq
 
 public struct Resetable {
-    public static func downgradeReset0d(obj: Any) {
+    public static func downgradeReset0d(obj: AnyObject?) -> Subscription0d.Fn? {
         if let resetable0d = (obj as? Resetable0d) {
-            resetable0d.reset()
+            return {
+                resetable0d.reset()
+                return .keep
+            }
         }
+        return nil
     }
-    public static func downgradeReset1d(obj: Any, deletions: [Int], insertions: [Int], updates: [Int]) {
+    
+    public static func downgradeReset1d(obj: AnyObject?) -> Subscription1d.Fn? {
         if let resetable1d = (obj as? Resetable1d) {
-            resetable1d.reset(deletions: deletions, insertions: insertions, updates: updates)
+            return { deletions, insertions, updates in
+                resetable1d.reset(deletions: deletions, insertions: insertions, updates: updates)
+                return .keep
+            }
         }
-        downgradeReset0d(obj: obj)
+        if let fn = downgradeReset0d(obj: obj) {
+            return { _, _, _ in
+                return fn()
+            }
+        }
+        return nil
     }
-    public static func downgradeReset2d(obj: Any, deletions: [Index2d], insertions: [Index2d], updates: [Index2d], sectionDeletions: [Int], sectionInsertions: [Int], sectionUpdates: [Int]) {
+    
+    public static func downgradeReset2d(obj: AnyObject?) -> Subscription2d.Fn? {
         if let resetable2d = (obj as? Resetable2d) {
-            resetable2d.reset(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions, sectionUpdates: sectionUpdates)
+            return { deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates in
+                resetable2d.reset(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions, sectionUpdates: sectionUpdates)
+                return .keep
+            }
         }
-        downgradeReset1d(obj: obj, deletions: sectionDeletions, insertions: sectionInsertions, updates: sectionUpdates)
+        if let fn = downgradeReset1d(obj: obj) {
+            return { _, _, _, sectionDeletions, sectionInsertions, sectionUpdates in
+                return fn(sectionDeletions, sectionInsertions, sectionUpdates)
+            }
+        }
+        return nil
     }
 }
 
