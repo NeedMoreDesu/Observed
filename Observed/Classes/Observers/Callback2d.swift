@@ -27,15 +27,15 @@ public class Callback2d: Callback0d {
             observed.callback.fullUpdate.update()
             return .keep
         }
-        self.changes.subscribe { [weak observed] (deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates) -> DeleteOrKeep in
+        self.changes.subscribe { [weak observed] (deletions, insertions, updates, sectionDeletions, sectionInsertions) -> DeleteOrKeep in
             guard let observed = observed else {
                 return .delete
             }
-            let _ = Resetable.downgradeReset2d(obj: observed.obj as AnyObject)?(deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates)
+            let _ = Resetable.downgradeReset2d(obj: observed.obj as AnyObject)?(deletions, insertions, updates, sectionDeletions, sectionInsertions)
             if let Callback = observed.callback as? Callback2d {
-                Callback.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions, sectionUpdates: sectionUpdates)
+                Callback.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions)
             } else if let Callback = observed.callback as? Callback1d {
-                Callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: sectionUpdates)
+                Callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: [])
             } else {
                 observed.callback.fullUpdate.update()
             }
@@ -75,7 +75,7 @@ public class Callback2d: Callback0d {
                 return .keep
             }
         }
-        self.changes.subscribe { (deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates) -> DeleteOrKeep in
+        self.changes.subscribe { (deletions, insertions, updates, sectionDeletions, sectionInsertions) -> DeleteOrKeep in
             switch tableViewGetter() {
             case .delete:
                 return .delete
@@ -115,7 +115,7 @@ extension Observed where ObjectType: Collection, ObjectType.Element: Collection 
             return outputSeq
         }.lazySeq()
         outputSeq.shouldStoreCount = true
-        let observed = Observed2d<ReturnType>(obj: outputSeq)
+        let observed = Observed2d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputSeq)
         self.callback.subscribe(observed)
         return observed
     }
@@ -127,7 +127,7 @@ extension Observed where ObjectType: Collection, ObjectType.Element: Collection 
             let outputSeq = inputSeq.map(transform)
             return outputSeq
             }.lazySeq()
-        let observed = Observed2d<ReturnType>(obj: outputSeq)
+        let observed = Observed2d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputSeq)
         self.callback.subscribe(observed)
         return observed
     }

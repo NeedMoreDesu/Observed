@@ -56,7 +56,7 @@ extension Observed where ObjectType: Collection {
         let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
         let outputSeq = inputSeq.map(transform).lazySeq()
         outputSeq.shouldStoreCount = true
-        let observed = Observed1d<ReturnType>(obj: outputSeq)
+        let observed = Observed1d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputSeq)
         self.callback.subscribe(observed)
         return observed
     }
@@ -64,7 +64,7 @@ extension Observed where ObjectType: Collection {
     public func map1dWithoutStorage<ReturnType>(_ transform: @escaping (Type1d) -> ReturnType) -> Observed1d<ReturnType> {
         let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
         let outputSeq = inputSeq.map(transform)
-        let observed = Observed1d<ReturnType>(obj: outputSeq)
+        let observed = Observed1d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputSeq)
         self.callback.subscribe(observed)
         return observed
     }

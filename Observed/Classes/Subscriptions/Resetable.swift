@@ -36,14 +36,14 @@ public struct Resetable {
     
     public static func downgradeReset2d(obj: AnyObject?) -> Subscription2d.Fn? {
         if let resetable2d = (obj as? Resetable2d) {
-            return { deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates in
-                resetable2d.reset(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions, sectionUpdates: sectionUpdates)
+            return { deletions, insertions, updates, sectionDeletions, sectionInsertions in
+                resetable2d.reset(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions)
                 return .keep
             }
         }
         if let fn = downgradeReset1d(obj: obj) {
-            return { _, _, _, sectionDeletions, sectionInsertions, sectionUpdates in
-                return fn(sectionDeletions, sectionInsertions, sectionUpdates)
+            return { _, _, _, sectionDeletions, sectionInsertions in
+                return fn(sectionDeletions, sectionInsertions, [])
             }
         }
         return nil
@@ -85,13 +85,13 @@ extension LazySeq: Resetable1d {
 }
 
 public protocol Resetable2d {
-    func reset(deletions: [Index2d], insertions: [Index2d], updates: [Index2d], sectionDeletions: [Int], sectionInsertions: [Int], sectionUpdates: [Int])
+    func reset(deletions: [Index2d], insertions: [Index2d], updates: [Index2d], sectionDeletions: [Int], sectionInsertions: [Int])
 }
 
 extension LazySeq: Resetable2d {
-    public func reset(deletions: [Index2d], insertions: [Index2d], updates: [Index2d], sectionDeletions: [Int], sectionInsertions: [Int], sectionUpdates: [Int]) {
+    public func reset(deletions: [Index2d], insertions: [Index2d], updates: [Index2d], sectionDeletions: [Int], sectionInsertions: [Int]) {
         guard self.first is Resetable1d else {
-            self.reset(deletions: sectionDeletions, insertions: sectionInsertions, updates: sectionUpdates)
+            self.reset(deletions: sectionDeletions, insertions: sectionInsertions, updates: [])
             return
         }
         let deletionsGrouped = Dictionary.init(grouping: deletions, by: { (index) -> Int in

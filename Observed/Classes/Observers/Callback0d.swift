@@ -33,14 +33,14 @@ public class Callback0d {
 extension Observed {
     public func map0d<ReturnType>(_ transform: @escaping (ObjectType) -> ReturnType) -> Observed0d<ReturnType> {
         let outputObj = LazyTransform { return transform(self.obj) }
-        let observed = Observed0d<ReturnType>(obj: outputObj)
+        let observed = Observed0d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputObj)
         self.callback.subscribe(observed)
         return observed
     }
     
     public func map0dWithoutStorage<ReturnType>(_ transform: @escaping (ObjectType) -> ReturnType) -> Observed0d<ReturnType> {
         let outputObj = GeneratedTransform { return transform(self.obj) }
-        let observed = Observed0d<ReturnType>(obj: outputObj)
+        let observed = Observed0d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputObj)
         self.callback.subscribe(observed)
         return observed
     }
