@@ -1,5 +1,5 @@
 //
-//  Observer2d.swift
+//  Callback2d.swift
 //  Observed
 //
 //  Created by Oleksii Horishnii on 10/27/17.
@@ -8,9 +8,9 @@
 import Foundation
 import LazySeq
 
-public typealias Observed2d<Type> = Observed<GeneratedSeq<GeneratedSeq<Type>>, Observer2d>
+public typealias Observed2d<Type> = Observed<GeneratedSeq<GeneratedSeq<Type>>, Callback2d>
 
-public class Observer2d: Observer0d {
+public class Callback2d: Callback0d {
     public let changes = Subscription2d()
     
     override func setObjectToReset(_ objectToReset: AnyObject) {
@@ -18,13 +18,13 @@ public class Observer2d: Observer0d {
         self.changes.objectToReset = objectToReset
     }
     
-    override func subscribe<TargetObjectType, TargetObserverType>(_ observed: Observed<TargetObjectType, TargetObserverType>) {
+    override func subscribe<TargetObjectType, TargetCallbackType>(_ observed: Observed<TargetObjectType, TargetCallbackType>) {
         self.fullUpdate.subscribe { [weak observed] () -> DeleteOrKeep in
             guard let observed = observed else {
                 return .delete
             }
             let _ = Resetable.downgradeReset0d(obj: observed.obj as AnyObject)?()
-            observed.observer.fullUpdate.update()
+            observed.callback.fullUpdate.update()
             return .keep
         }
         self.changes.subscribe { [weak observed] (deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates) -> DeleteOrKeep in
@@ -32,12 +32,12 @@ public class Observer2d: Observer0d {
                 return .delete
             }
             let _ = Resetable.downgradeReset2d(obj: observed.obj as AnyObject)?(deletions, insertions, updates, sectionDeletions, sectionInsertions, sectionUpdates)
-            if let observer = observed.observer as? Observer2d {
-                observer.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions, sectionUpdates: sectionUpdates)
-            } else if let observer = observed.observer as? Observer1d {
-                observer.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: sectionUpdates)
+            if let Callback = observed.callback as? Callback2d {
+                Callback.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions, sectionUpdates: sectionUpdates)
+            } else if let Callback = observed.callback as? Callback1d {
+                Callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: sectionUpdates)
             } else {
-                observed.observer.fullUpdate.update()
+                observed.callback.fullUpdate.update()
             }
             
             return .keep
@@ -116,7 +116,7 @@ extension Observed where ObjectType: Collection, ObjectType.Element: Collection 
         }.lazySeq()
         outputSeq.shouldStoreCount = true
         let observed = Observed2d<ReturnType>(obj: outputSeq)
-        self.observer.subscribe(observed)
+        self.callback.subscribe(observed)
         return observed
     }
 
@@ -128,12 +128,12 @@ extension Observed where ObjectType: Collection, ObjectType.Element: Collection 
             return outputSeq
             }.lazySeq()
         let observed = Observed2d<ReturnType>(obj: outputSeq)
-        self.observer.subscribe(observed)
+        self.callback.subscribe(observed)
         return observed
     }
 }
 
-extension Observed where ObjectType: Collection, ObjectType.Element: Collection, ObserverType == Observer2d {
+extension Observed where ObjectType: Collection, ObjectType.Element: Collection, CallbackType == Callback2d {
 
 }
 

@@ -17,7 +17,7 @@ class TableOfContentsSpec: QuickSpec {
             let a = Observed1d(obj: gen)
             func cleanupState() {
                 arr = [1, 2, 3]
-                a.observer.fullUpdate.update()
+                a.callback.fullUpdate.update()
             }
             
             context("map1d") {
@@ -35,7 +35,7 @@ class TableOfContentsSpec: QuickSpec {
                 it("expected updating behaviour") {
                     let expectedUpdatedValue = ["1obj", "2obj", "10obj", "20obj"]
                     cleanupState()
-                    b.observer.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                    b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
                         expect(b.obj.allObjects()) == expectedUpdatedValue
                         return .delete
                     })
@@ -43,7 +43,7 @@ class TableOfContentsSpec: QuickSpec {
                     arr = [1, 2, 10, 20]
                     expect(b.obj.allObjects()) == expectedDefaultValue
                     expect(bNoStore.obj.allObjects()) == expectedUpdatedValue
-                    a.observer.fullUpdate.update()
+                    a.callback.fullUpdate.update()
                     expect(b.obj.allObjects()) == expectedUpdatedValue
                 }
             }
@@ -63,7 +63,7 @@ class TableOfContentsSpec: QuickSpec {
                 it("expected updating behaviour") {
                     let expectedUpdatedValue = "count == 4"
                     cleanupState()
-                    b.observer.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                    b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
                         expect(b.obj.value()) == expectedUpdatedValue
                         return .delete
                     })
@@ -71,7 +71,7 @@ class TableOfContentsSpec: QuickSpec {
                     arr = [1, 2, 10, 20]
                     expect(b.obj.value()) == expectedDefaultValue
                     expect(bNoStore.obj.value()) == expectedUpdatedValue
-                    a.observer.fullUpdate.update()
+                    a.callback.fullUpdate.update()
                     expect(b.obj.value()) == expectedUpdatedValue
                 }
             }
@@ -92,7 +92,7 @@ class TableOfContentsSpec: QuickSpec {
             let a = Observed1d(obj: gen)
             func cleanupState() {
                 arr = [[1, 2, 3], [40, 50], [600], [7000, 8000]]
-                a.observer.fullUpdate.update()
+                a.callback.fullUpdate.update()
             }
             
             context("map2d", {
@@ -110,7 +110,7 @@ class TableOfContentsSpec: QuickSpec {
                 it("expected updating behaviour") {
                     let expectedUpdatedValue = [[1.5, 2.5, 3.5, 9.5], [40.5, 50.5, 10.5], [600.5], [7000.5, 8000.5], [123.5]]
                     cleanupState()
-                    b.observer.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                    b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
                         expect(b.obj.equal2d(expectedUpdatedValue)) == true
                         return .delete
                     })
@@ -120,7 +120,7 @@ class TableOfContentsSpec: QuickSpec {
                     arr.append([123])
                     expect(b.obj.equal2d(expectedDefaultValue)) == true
                     expect(bNoStore.obj.equal2d(expectedUpdatedValue)) == true
-                    a.observer.fullUpdate.update()
+                    a.callback.fullUpdate.update()
                     expect(b.obj.equal2d(expectedUpdatedValue)) == true
                 }
             })
@@ -144,7 +144,7 @@ class TableOfContentsSpec: QuickSpec {
                 it("expected updating behaviour") {
                     let expectedUpdatedValue = [6+9, 90+10, 600, 15000]
                     cleanupState()
-                    b.observer.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                    b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
                         expect(b.obj.allObjects()) == expectedUpdatedValue
                         return .delete
                     })
@@ -153,7 +153,7 @@ class TableOfContentsSpec: QuickSpec {
                     arr[1].append(10)
                     expect(b.obj.allObjects()) == expectedDefaultValue
                     expect(bNoStore.obj.allObjects()) == expectedUpdatedValue
-                    a.observer.fullUpdate.update()
+                    a.callback.fullUpdate.update()
                     expect(b.obj.allObjects()) == expectedUpdatedValue
                 }
             })
@@ -177,7 +177,7 @@ class TableOfContentsSpec: QuickSpec {
                 it("expected updating behaviour") {
                     let expectedUpdatedValue = 8+2
                     cleanupState()
-                    b.observer.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                    b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
                         expect(b.obj.value()) == expectedUpdatedValue
                         return .delete
                     })
@@ -186,7 +186,7 @@ class TableOfContentsSpec: QuickSpec {
                     arr[1].append(10)
                     expect(b.obj.value()) == expectedDefaultValue
                     expect(bNoStore.obj.value()) == expectedUpdatedValue
-                    a.observer.fullUpdate.update()
+                    a.callback.fullUpdate.update()
                     expect(b.obj.value()) == expectedUpdatedValue
                 }
             })
