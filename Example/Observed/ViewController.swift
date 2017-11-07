@@ -21,7 +21,7 @@ class ViewController: UIViewController {
         }, generate: { idx, _ in
             return arr[idx]
         })
-        let a = Observed(obj: gen, observer: Observer1d())
+        let a = Observed1d(obj: gen)
         let b = a.map0d { (wholeObj) -> String in
             return "\(wholeObj.count) count"
         }

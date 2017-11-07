@@ -8,11 +8,7 @@
 import Foundation
 import LazySeq
 
-public enum TableViewOrDeleteOrKeep {
-    case tableView(UITableView)
-    case delete
-    case keep
-}
+public typealias Observed1d<Type> = Observed<GeneratedSeq<Type>, Observer1d>
 
 public class Observer1d: Observer0d {
     public let changes = Subscription1d()
@@ -47,22 +43,28 @@ public class Observer1d: Observer0d {
     }
 }
 
+public enum TableViewOrDeleteOrKeep {
+    case tableView(UITableView)
+    case delete
+    case keep
+}
+
 extension Observed where ObjectType: Collection {
     public typealias Type1d = ObjectType.Element
     
-    public func map1d<ReturnType>(_ transform: @escaping (Type1d) -> ReturnType) -> Observed<LazySeq<ReturnType>, Observer1d> {
+    public func map1d<ReturnType>(_ transform: @escaping (Type1d) -> ReturnType) -> Observed1d<ReturnType> {
         let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
         let outputSeq = inputSeq.map(transform).lazySeq()
         outputSeq.shouldStoreCount = true
-        let observed = Observed<LazySeq<ReturnType>, Observer1d>(obj: outputSeq, observer: Observer1d())
+        let observed = Observed1d<ReturnType>(obj: outputSeq)
         self.observer.subscribe(observed)
         return observed
     }
 
-    public func map1dWithoutStorage<ReturnType>(_ transform: @escaping (Type1d) -> ReturnType) -> Observed<GeneratedSeq<ReturnType>, Observer1d> {
+    public func map1dWithoutStorage<ReturnType>(_ transform: @escaping (Type1d) -> ReturnType) -> Observed1d<ReturnType> {
         let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
         let outputSeq = inputSeq.map(transform)
-        let observed = Observed<GeneratedSeq<ReturnType>, Observer1d>(obj: outputSeq, observer: Observer1d())
+        let observed = Observed1d<ReturnType>(obj: outputSeq)
         self.observer.subscribe(observed)
         return observed
     }

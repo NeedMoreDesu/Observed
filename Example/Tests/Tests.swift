@@ -14,7 +14,7 @@ class TableOfContentsSpec: QuickSpec {
             }, generate: { idx, _ in
                 return arr[idx]
             })
-            let a = Observed(obj: gen, observer: Observer1d())
+            let a = Observed1d(obj: gen)
             func cleanupState() {
                 arr = [1, 2, 3]
                 a.observer.fullUpdate.update()
@@ -89,7 +89,7 @@ class TableOfContentsSpec: QuickSpec {
                 })
             })
             
-            let a = Observed(obj: gen, observer: Observer1d())
+            let a = Observed1d(obj: gen)
             func cleanupState() {
                 arr = [[1, 2, 3], [40, 50], [600], [7000, 8000]]
                 a.observer.fullUpdate.update()

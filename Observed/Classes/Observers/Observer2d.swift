@@ -8,6 +8,8 @@
 import Foundation
 import LazySeq
 
+public typealias Observed2d<Type> = Observed<GeneratedSeq<GeneratedSeq<Type>>, Observer2d>
+
 public class Observer2d: Observer0d {
     public let changes = Subscription2d()
     
@@ -104,28 +106,28 @@ public class Observer2d: Observer0d {
 extension Observed where ObjectType: Collection, ObjectType.Element: Collection {
     public typealias Type2d = Type1d.Element
 
-    public func map2d<ReturnType>(_ transform: @escaping (Type2d) -> ReturnType) -> Observed<LazySeq<LazySeq<ReturnType>>, Observer2d> {
+    public func map2d<ReturnType>(_ transform: @escaping (Type2d) -> ReturnType) -> Observed2d<ReturnType> {
         let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
-        let outputSeq = inputSeq.map { (row) -> LazySeq<ReturnType> in
+        let outputSeq = inputSeq.map { (row) -> GeneratedSeq<ReturnType> in
             let inputSeq = row as? GeneratedSeq<Type2d> ?? row.generatedSeq()
             let outputSeq = inputSeq.map(transform).lazySeq()
             outputSeq.shouldStoreCount = true
             return outputSeq
         }.lazySeq()
         outputSeq.shouldStoreCount = true
-        let observed = Observed<LazySeq<LazySeq<ReturnType>>, Observer2d>(obj: outputSeq, observer: Observer2d())
+        let observed = Observed2d<ReturnType>(obj: outputSeq)
         self.observer.subscribe(observed)
         return observed
     }
 
-    public func map2dWithoutStorage<ReturnType>(_ transform: @escaping (Type2d) -> ReturnType) -> Observed<LazySeq<GeneratedSeq<ReturnType>>, Observer2d> {
+    public func map2dWithoutStorage<ReturnType>(_ transform: @escaping (Type2d) -> ReturnType) -> Observed2d<ReturnType> {
         let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
         let outputSeq = inputSeq.map { (row) -> GeneratedSeq<ReturnType> in
             let inputSeq = row as? GeneratedSeq<Type2d> ?? row.generatedSeq()
             let outputSeq = inputSeq.map(transform)
             return outputSeq
             }.lazySeq()
-        let observed = Observed<LazySeq<GeneratedSeq<ReturnType>>, Observer2d>(obj: outputSeq, observer: Observer2d())
+        let observed = Observed2d<ReturnType>(obj: outputSeq)
         self.observer.subscribe(observed)
         return observed
     }
