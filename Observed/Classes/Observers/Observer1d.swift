@@ -53,6 +53,7 @@ extension Observed where ObjectType: Collection {
     public func map1d<ReturnType>(_ transform: @escaping (Type1d) -> ReturnType) -> Observed<LazySeq<ReturnType>, Observer1d> {
         let inputSeq = self.obj as? GeneratedSeq<Type1d> ?? self.obj.generatedSeq()
         let outputSeq = inputSeq.map(transform).lazySeq()
+        outputSeq.shouldStoreCount = true
         let observed = Observed<LazySeq<ReturnType>, Observer1d>(obj: outputSeq, observer: Observer1d())
         self.observer.subscribe(observed)
         return observed

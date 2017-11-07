@@ -109,8 +109,10 @@ extension Observed where ObjectType: Collection, ObjectType.Element: Collection 
         let outputSeq = inputSeq.map { (row) -> LazySeq<ReturnType> in
             let inputSeq = row as? GeneratedSeq<Type2d> ?? row.generatedSeq()
             let outputSeq = inputSeq.map(transform).lazySeq()
+            outputSeq.shouldStoreCount = true
             return outputSeq
         }.lazySeq()
+        outputSeq.shouldStoreCount = true
         let observed = Observed<LazySeq<LazySeq<ReturnType>>, Observer2d>(obj: outputSeq, observer: Observer2d())
         self.observer.subscribe(observed)
         return observed

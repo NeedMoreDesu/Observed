@@ -22,7 +22,7 @@ class ViewController: UIViewController {
             return arr[idx]
         })
         let a = Observed(obj: gen, observer: Observer1d())
-        let b = a.map { (wholeObj) -> String in
+        let b = a.map0d { (wholeObj) -> String in
             return "\(wholeObj.count) count"
         }
         let c = a.map1d { (justOneObj) -> String in

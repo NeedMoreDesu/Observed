@@ -54,6 +54,9 @@ public protocol Resetable0d {
     func reset()
 }
 
+extension LazyTransform: Resetable0d {
+}
+
 extension LazySeq: Resetable0d {
     public func reset() {
         self.resetStorage()

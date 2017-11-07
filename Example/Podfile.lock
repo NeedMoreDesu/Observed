@@ -5,7 +5,7 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - LazySeq (0.5.5):
+  - LazySeq (0.7.0):
     - DividableRange (~> 0.1)
   - Nimble (7.0.2)
   - Nimble-Snapshots (6.3.0):
@@ -31,7 +31,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   DividableRange: 1d855fc59a834f36a13f2b1c53cc69f2f0291b04
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  LazySeq: f91594c4af192daa612dfde4f8eec38ea20bf32e
+  LazySeq: 07a3a75e1cda04756d97a4225c7b1a2c70e35406
   Nimble: bfe1f814edabba69ff145cb1283e04ed636a67f2
   Nimble-Snapshots: f5459b5b091678dc942d03ec4741cacb58ba4a52
   Observed: 566d71c11ed8aaff9efd5440c7218891e460b1fb

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LazySeq
 
 public class Observer0d {
     public let fullUpdate = Subscription0d()
@@ -28,14 +29,14 @@ public class Observer0d {
 }
 
 extension Observed {
-    public func map<ReturnType>(_ transform: @escaping (ObjectType) -> ReturnType) -> Observed<LazyTransform<ReturnType>, Observer0d> {
+    public func map0d<ReturnType>(_ transform: @escaping (ObjectType) -> ReturnType) -> Observed<LazyTransform<ReturnType>, Observer0d> {
         let outputObj = LazyTransform { return transform(self.obj) }
         let observed = Observed<LazyTransform<ReturnType>, Observer0d>(obj: outputObj, observer: Observer0d())
         self.observer.subscribe(observed)
         return observed
     }
     
-    public func mapWithoutStorage<ReturnType>(_ transform: @escaping (ObjectType) -> ReturnType) -> Observed<GeneratedTransform<ReturnType>, Observer0d> {
+    public func map0dWithoutStorage<ReturnType>(_ transform: @escaping (ObjectType) -> ReturnType) -> Observed<GeneratedTransform<ReturnType>, Observer0d> {
         let outputObj = GeneratedTransform { return transform(self.obj) }
         let observed = Observed<GeneratedTransform<ReturnType>, Observer0d>(obj: outputObj, observer: Observer0d())
         self.observer.subscribe(observed)
