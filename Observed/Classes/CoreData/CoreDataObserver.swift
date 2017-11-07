@@ -1,6 +1,6 @@
 //
 //  CoreDataObserver.swift
-//  ObservedLazySeq
+//  Observed
 //
 //  Created by Oleksii Horishnii on 10/13/17.
 //

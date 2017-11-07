@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Observed
 //
-//  Created by Oleksii Horishnii on 10/13/2017.
+//  Created by Oleksii Horishnii on 10/27/2017.
 //  Copyright (c) 2017 Oleksii Horishnii. All rights reserved.
 //
 
@@ -10,17 +10,12 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    static let shared = UIApplication.shared.delegate as! AppDelegate
-    
+
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
-        DependencyInjection.shared.setup()
-        let rounter: ApplicationStartRouter = DependencyInjection.shared.resolve()
-        rounter.showFirstScreen()
-        
+        // Override point for customization after application launch.
         return true
     }
 

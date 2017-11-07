@@ -2,11 +2,25 @@ use_frameworks!
 
 target 'Observed_Example' do
   pod 'Observed', :path => '../'
+  pod 'DATAStack', '~> 6'
+  pod 'Swinject', '2.0.0'
 
   target 'Observed_Tests' do
     pod 'Quick', '~> 1.2.0'
-  pod 'Nimble', '~> 7.0.2'
-  pod 'FBSnapshotTestCase' , '~> 2.1.4'
-  pod 'Nimble-Snapshots' , '~> 6.3.0'
+    pod 'Nimble', '~> 7.0.2'
+    pod 'FBSnapshotTestCase' , '~> 2.1.4'
+    pod 'Nimble-Snapshots' , '~> 6.3.0'
   end
+end
+
+def prepareToSwift3(installer)
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '3.0'
+    end
+  end
+end
+
+post_install do |installer|
+  prepareToSwift3 installer
 end
