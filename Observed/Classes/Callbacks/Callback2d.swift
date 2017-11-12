@@ -35,7 +35,8 @@ public class Callback2d: Callback0d {
             if let Callback = observed.callback as? Callback2d {
                 Callback.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions)
             } else if let Callback = observed.callback as? Callback1d {
-                Callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: [])
+                let updates = deletions.map { $0.section } + insertions.map { $0.section } + updates.map { $0.section }
+                Callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: updates)
             } else {
                 observed.callback.fullUpdate.update()
             }

@@ -118,7 +118,7 @@ class Tests2d: QuickSpec {
                 cleanupState()
                 expect(b.obj.allObjects()) == expectedDefaultValue
             }
-            it("expected updating behaviour") {
+            it("expected fullupdating behaviour") {
                 let expectedUpdatedValue = [6+9, 90+10, 600, 15000]
                 cleanupState()
                 b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
@@ -131,6 +131,21 @@ class Tests2d: QuickSpec {
                 expect(b.obj.allObjects()) == expectedDefaultValue
                 expect(bNoStore.obj.allObjects()) == expectedUpdatedValue
                 a.callback.fullUpdate.update()
+                expect(b.obj.allObjects()) == expectedUpdatedValue
+            }
+            it("expected updating behaviour") {
+                let expectedUpdatedValue = [6+9, 90+10, 600, 15000]
+                cleanupState()
+                b.callback.changes.subscribe({ (_, _, _) -> DeleteOrKeep in
+                    expect(b.obj.allObjects()) == expectedUpdatedValue
+                    return .delete
+                })
+                expect(b.obj.allObjects()) == expectedDefaultValue
+                arr[0].append(9)
+                arr[1].append(10)
+                expect(b.obj.allObjects()) == expectedDefaultValue
+                expect(bNoStore.obj.allObjects()) == expectedUpdatedValue
+                a.callback.changes.update(deletions: [], insertions: [Index2d(section:0, row: 3), Index2d(section:1, row: 2)], updates: [], sectionDeletions: [], sectionInsertions: [])
                 expect(b.obj.allObjects()) == expectedUpdatedValue
             }
         })
@@ -151,7 +166,7 @@ class Tests2d: QuickSpec {
                 cleanupState()
                 expect(b.obj.value()) == 8
             }
-            it("expected updating behaviour") {
+            it("expected fullupdating behaviour") {
                 let expectedUpdatedValue = 8+2
                 cleanupState()
                 b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
@@ -166,6 +181,22 @@ class Tests2d: QuickSpec {
                 a.callback.fullUpdate.update()
                 expect(b.obj.value()) == expectedUpdatedValue
             }
-        })
+
+            it("expected updating behaviour") {
+                let expectedUpdatedValue = 8+2
+                cleanupState()
+                b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                    expect(b.obj.value()) == expectedUpdatedValue
+                    return .delete
+                })
+                expect(b.obj.value()) == expectedDefaultValue
+                arr[0].append(9)
+                arr[1].append(10)
+                expect(b.obj.value()) == expectedDefaultValue
+                expect(bNoStore.obj.value()) == expectedUpdatedValue
+                a.callback.changes.update(deletions: [], insertions: [Index2d(section:0, row: 3), Index2d(section:1, row: 2)], updates: [], sectionDeletions: [], sectionInsertions: [])
+                expect(b.obj.value()) == expectedUpdatedValue
+            }
+})
     }
 }
