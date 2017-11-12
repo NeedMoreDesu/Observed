@@ -90,7 +90,7 @@ public protocol Resetable2d {
 
 extension LazySeq: Resetable2d {
     public func reset(deletions: [Index2d], insertions: [Index2d], updates: [Index2d], sectionDeletions: [Int], sectionInsertions: [Int]) {
-        guard self.first is Resetable1d else {
+        guard self.first is Collection else {
             self.reset(deletions: sectionDeletions, insertions: sectionInsertions, updates: [])
             return
         }

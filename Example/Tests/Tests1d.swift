@@ -31,18 +31,36 @@ class Tests1d: QuickSpec {
                 cleanupState()
                 expect(b.obj.allObjects()) == expectedDefaultValue
             }
-            it("expected updating behaviour") {
-                let expectedUpdatedValue = ["1obj", "2obj", "10obj", "20obj"]
+            it("expected fullupdating behaviour") {
+                let expectedUpdatedValue = ["1obj", "2obj", "10obj", "20obj", "30obj"]
                 cleanupState()
                 b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
                     expect(b.obj.allObjects()) == expectedUpdatedValue
                     return .delete
                 })
                 expect(b.obj.allObjects()) == expectedDefaultValue
-                arr = [1, 2, 10, 20]
-                expect(b.obj.allObjects()) == expectedDefaultValue
+                arr[2] = 10
+                arr.append(20)
+                arr.append(30)
+                expect(b.obj.allObjects()) != expectedDefaultValue // expected broken state before update
                 expect(bNoStore.obj.allObjects()) == expectedUpdatedValue
                 a.callback.fullUpdate.update()
+                expect(b.obj.allObjects()) == expectedUpdatedValue
+            }
+            it("expected updating behaviour") {
+                let expectedUpdatedValue = ["1obj", "2obj", "10obj", "20obj", "30obj"]
+                cleanupState()
+                b.callback.changes.subscribe({ (_, _, _) -> DeleteOrKeep in
+                    expect(b.obj.allObjects()) == expectedUpdatedValue
+                    return .delete
+                })
+                expect(b.obj.allObjects()) == expectedDefaultValue
+                arr[2] = 10
+                arr.append(20)
+                arr.append(30)
+                expect(b.obj.allObjects()) != expectedDefaultValue // expected broken state before update
+                expect(bNoStore.obj.allObjects()) == expectedUpdatedValue
+                a.callback.changes.update(deletions: [], insertions: [3, 4], updates: [2])
                 expect(b.obj.allObjects()) == expectedUpdatedValue
             }
         }

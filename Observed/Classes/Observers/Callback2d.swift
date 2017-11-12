@@ -111,10 +111,8 @@ extension Observed where ObjectType: Collection, ObjectType.Element: Collection 
         let outputSeq = inputSeq.map { (row) -> GeneratedSeq<ReturnType> in
             let inputSeq = row as? GeneratedSeq<Type2d> ?? row.generatedSeq()
             let outputSeq = inputSeq.map(transform).lazySeq()
-            outputSeq.shouldStoreCount = true
             return outputSeq
         }.lazySeq()
-        outputSeq.shouldStoreCount = true
         let observed = Observed2d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputSeq)
         self.callback.subscribe(observed)
         return observed

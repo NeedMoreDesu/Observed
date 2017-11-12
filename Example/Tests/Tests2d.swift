@@ -18,7 +18,7 @@ class Tests2d: QuickSpec {
             })
         })
         
-        let a = Observed1d(obj: gen)
+        let a = Observed2d(obj: gen)
         func cleanupState() {
             arr = [[1, 2, 3], [40, 50], [600], [7000, 8000]]
             a.callback.fullUpdate.update()
@@ -36,7 +36,7 @@ class Tests2d: QuickSpec {
                 cleanupState()
                 expect(b.obj.equal2d(expectedDefaultValue)) == true
             }
-            it("expected updating behaviour") {
+            it("expected fullupdating behaviour") {
                 let expectedUpdatedValue = [[1.5, 2.5, 3.5, 9.5], [40.5, 50.5, 10.5], [600.5], [7000.5, 8000.5], [123.5]]
                 cleanupState()
                 b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
@@ -47,9 +47,57 @@ class Tests2d: QuickSpec {
                 arr[0].append(9)
                 arr[1].append(10)
                 arr.append([123])
-                expect(b.obj.equal2d(expectedDefaultValue)) == true
+                expect(b.obj.equal2d(expectedDefaultValue)) == false // expected broken state before update
                 expect(bNoStore.obj.equal2d(expectedUpdatedValue)) == true
                 a.callback.fullUpdate.update()
+                expect(b.obj.equal2d(expectedUpdatedValue)) == true
+            }
+            it("expected updating behaviour") {
+                let expectedUpdatedValue = [[1.5, 2.5, 3.5, 9.5], [40.5, 50.5, 10.5], [600.5], [7000.5, 8000.5], [123.5]]
+                cleanupState()
+                b.callback.changes.subscribe({ (_, _, _, _, _) -> DeleteOrKeep in
+                    expect(b.obj.equal2d(expectedUpdatedValue)) == true
+                    return .delete
+                })
+                expect(b.obj.equal2d(expectedDefaultValue)) == true
+                arr[0].append(9)
+                arr[1].append(10)
+                arr.append([123])
+                expect(b.obj.equal2d(expectedDefaultValue)) == false // expected broken state before update
+                expect(bNoStore.obj.equal2d(expectedUpdatedValue)) == true
+                a.callback.changes.update(deletions: [], insertions: [Index2d(section:0, row: 3), Index2d(section:1, row: 2)], updates: [], sectionDeletions: [], sectionInsertions: [5])
+                expect(b.obj.equal2d(expectedUpdatedValue)) == true
+            }
+            it("expected fullupdating behaviour 2") {
+                let expectedUpdatedValue = [[1.5, 2.5, 3.5], [600.5]]
+                cleanupState()
+                b.callback.fullUpdate.subscribe({ () -> DeleteOrKeep in
+                    expect(b.obj.equal2d(expectedUpdatedValue)) == true
+                    return .delete
+                })
+                expect(b.obj.equal2d(expectedDefaultValue)) == true
+                arr.remove(at: 1)
+                arr.remove(at: 2)
+                expect(b.obj.equal2d(expectedDefaultValue)) == false // expected broken state before update
+                expect(bNoStore.obj.equal2d(expectedUpdatedValue)) == true
+                a.callback.fullUpdate.update()
+                expect(b.obj.equal2d(expectedUpdatedValue)) == true
+            }
+            it("expected updating behaviour 2") {
+                let expectedUpdatedValue = [[1.5, 2.5, 3.5], [600.5]]
+                cleanupState()
+                b.callback.changes.subscribe({ (_, _, _, _, _) -> DeleteOrKeep in
+                    print(arr)
+                    print(expectedUpdatedValue)
+                    expect(b.obj.equal2d(expectedUpdatedValue)) == true
+                    return .delete
+                })
+                expect(b.obj.equal2d(expectedDefaultValue)) == true
+                arr.remove(at: 1)
+                arr.remove(at: 2)
+                expect(b.obj.equal2d(expectedDefaultValue)) == false // expected broken state before update
+                expect(bNoStore.obj.equal2d(expectedUpdatedValue)) == true
+                a.callback.changes.update(deletions: [], insertions: [], updates: [], sectionDeletions: [1, 3], sectionInsertions: [])
                 expect(b.obj.equal2d(expectedUpdatedValue)) == true
             }
         })
