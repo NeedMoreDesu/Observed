@@ -21,17 +21,17 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/Oleksii Horishnii/Observed'
+  s.homepage         = 'https://github.com/NeedMoreDesu/Observed'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Oleksii Horishnii' => 'oleksii.horishnii@gmail.com' }
-  s.source           = { :git => 'https://github.com/Oleksii Horishnii/Observed.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/NeedMoreDesu/Observed', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'Observed/Classes/**/*'
-  
+
   # s.resource_bundles = {
   #   'Observed' => ['Observed/Assets/*.png']
   # }
