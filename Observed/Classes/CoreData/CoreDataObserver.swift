@@ -9,13 +9,9 @@ import Foundation
 import CoreData
 import LazySeq
 
-extension Observed {
-    public typealias fromCoreData<Type: NSManagedObject> = CoreDataObserver<Type>.Type
-}
-
 public struct FetchRequestParameters {
+    public var sortDescriptors: [NSSortDescriptor]!
     public var predicate: NSPredicate?
-    public var sortDescriptors: [NSSortDescriptor]?
     public var fetchBatchSize: Int?
     public var sectionNameKeyPath: String?
     public init() {}
@@ -24,15 +20,14 @@ public struct FetchRequestParameters {
 open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate where Type: NSManagedObject {
     private var controller: NSFetchedResultsController<Type>
     private class func fetchResultController(entityName: String,
-                                             primaryKey: String,
                                              managedObjectContext: NSManagedObjectContext,
-                                             params: FetchRequestParameters? = nil) -> NSFetchedResultsController<Type> {
+                                             params: FetchRequestParameters) -> NSFetchedResultsController<Type> {
         let request = NSFetchRequest<Type>(entityName: entityName)
-        request.predicate = params?.predicate
-        request.fetchBatchSize = params?.fetchBatchSize ?? 20
-        request.sortDescriptors = params?.sortDescriptors ?? [NSSortDescriptor(key: primaryKey, ascending: true)]
+        request.predicate = params.predicate
+        request.fetchBatchSize = params.fetchBatchSize ?? 20
+        request.sortDescriptors = params.sortDescriptors
         
-        let fetchedResultsController = NSFetchedResultsController<Type>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: params?.sectionNameKeyPath, cacheName: nil)
+        let fetchedResultsController = NSFetchedResultsController<Type>(fetchRequest: request, managedObjectContext: managedObjectContext, sectionNameKeyPath: params.sectionNameKeyPath, cacheName: nil)
         
         do {
             try fetchedResultsController.performFetch()
@@ -41,21 +36,6 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
         }
         
         return fetchedResultsController
-    }
-    
-    init(entityName: String,
-         primaryKey: String,
-         managedObjectContext: NSManagedObjectContext,
-         params: FetchRequestParameters? = nil) {
-        let fetchedResultController = CoreDataObserver.fetchResultController(entityName: entityName,
-                                                                             primaryKey: primaryKey,
-                                                                             managedObjectContext: managedObjectContext,
-                                                                             params: params)
-        self.controller = fetchedResultController
-        
-        super.init()
-        
-        fetchedResultController.delegate = self
     }
     
     init(fetchedResultController: NSFetchedResultsController<Type>) {
@@ -67,13 +47,12 @@ open class CoreDataObserver<Type>: NSObject, NSFetchedResultsControllerDelegate 
     }
     
     public class func create(entityName: String,
-                      primaryKey: String,
                       managedObjectContext: NSManagedObjectContext,
-                      params: FetchRequestParameters? = nil) -> Observed2d<Type> {
-        let observer = CoreDataObserver(entityName: entityName,
-                                        primaryKey: primaryKey,
-                                        managedObjectContext: managedObjectContext,
-                                        params: params)
+                      params: FetchRequestParameters) -> Observed2d<Type> {
+        let fetchedResultController = CoreDataObserver.fetchResultController(entityName: entityName,
+                                                                             managedObjectContext: managedObjectContext,
+                                                                             params: params)
+        let observer = CoreDataObserver(fetchedResultController: fetchedResultController)
         
         return observer.setupObservedSections()
     }

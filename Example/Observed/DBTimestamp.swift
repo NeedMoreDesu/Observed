@@ -35,7 +35,8 @@ extension DBTimestamp {
         var params = FetchRequestParameters()
         params.sectionNameKeyPath = "second"
         params.sortDescriptors = [NSSortDescriptor(key: "second", ascending: true), NSSortDescriptor(key: "time", ascending: true)]
-        let managedObjectsObserved = CoreDataObserver<DBTimestamp>.create(entityName: entityName, primaryKey: "time", managedObjectContext: context, params: params)
+        
+        let managedObjectsObserved = CoreDataObserver<DBTimestamp>.create(entityName: entityName, managedObjectContext: context, params: params)
         return managedObjectsObserved
     }
     
