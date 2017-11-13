@@ -34,8 +34,18 @@ public class Callback2d: Callback0d {
             if let callback = observed.callback as? Callback2d {
                 callback.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions)
             } else if let callback = observed.callback as? Callback1d {
-                let updates = deletions.map { $0.section } + insertions.map { $0.section } + updates.map { $0.section }
-                callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: updates)
+                if let section = callback.nth2dSection {
+                    func indexConversion(_ arr: [Index2d]) -> [Int] {
+                        return arr.filter{ $0.section == section }.map{ $0.row }
+                    }
+                    let deletions = indexConversion(deletions)
+                    let insertions = indexConversion(insertions)
+                    let updates = indexConversion(updates)
+                    callback.changes.update(deletions: deletions, insertions: insertions, updates: updates)
+                } else {
+                    let updates = deletions.map { $0.section } + insertions.map { $0.section } + updates.map { $0.section }
+                    callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: updates)
+                }
             } else {
                 observed.callback.fullUpdate.update()
             }
@@ -141,6 +151,24 @@ extension Observed where ObjectType: Collection, ObjectType.Element: Collection 
             return outputSeq
             }.lazySeq()
         let observed = Observed2d<ReturnType>(strongRefs: self.strongRefs + [self], obj: outputSeq)
+        self.callback.subscribe(observed)
+        return observed
+    }
+    
+    public func rowObserved(_ section: Int) -> Observed1d<Type2d> {
+        let val = self.obj[self.obj.index(self.obj.startIndex, offsetBy: numericCast(section))]
+        let outputSeq: GeneratedSeq<Type2d> = (val as? GeneratedSeq<Type2d> ?? val.generatedSeq()).lazySeq()
+        let observed = Observed1d<Type2d>(strongRefs: self.strongRefs + [self], obj: outputSeq)
+        observed.callback.nth2dSection = section
+        self.callback.subscribe(observed)
+        return observed
+    }
+
+    public func rowObservedNoStorage(_ section: Int) -> Observed1d<Type2d> {
+        let val = self.obj[self.obj.index(self.obj.startIndex, offsetBy: numericCast(section))]
+        let outputSeq: GeneratedSeq<Type2d> = val as? GeneratedSeq<Type2d> ?? val.generatedSeq()
+        let observed = Observed1d<Type2d>(strongRefs: self.strongRefs + [self], obj: outputSeq)
+        observed.callback.nth2dSection = section
         self.callback.subscribe(observed)
         return observed
     }

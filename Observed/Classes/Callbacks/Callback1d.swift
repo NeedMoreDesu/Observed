@@ -13,6 +13,7 @@ public typealias Observed1d<Type> = Observed<GeneratedSeq<Type>, Callback1d>
 
 public class Callback1d: Callback0d {
     public let changes = Subscription1d()
+    var nth2dSection: Int?
     
     override func setObjectToReset(_ objectToReset: AnyObject) {
         super.setObjectToReset(objectToReset)
