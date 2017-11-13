@@ -1,6 +1,5 @@
 # Observed
 
-[![CI Status](http://img.shields.io/travis/Oleksii Horishnii/Observed.svg?style=flat)](https://travis-ci.org/Oleksii Horishnii/Observed)
 [![Version](https://img.shields.io/cocoapods/v/Observed.svg?style=flat)](http://cocoapods.org/pods/Observed)
 [![License](https://img.shields.io/cocoapods/l/Observed.svg?style=flat)](http://cocoapods.org/pods/Observed)
 [![Platform](https://img.shields.io/cocoapods/p/Observed.svg?style=flat)](http://cocoapods.org/pods/Observed)
