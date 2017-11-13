@@ -23,7 +23,6 @@ public class Callback0d {
             guard let observed = observed else {
                 return .delete
             }
-            let _ = Resetable.downgradeReset0d(obj: observed.obj as AnyObject)?()
             observed.callback.fullUpdate.update()
             return .keep
         }

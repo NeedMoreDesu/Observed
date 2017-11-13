@@ -13,19 +13,13 @@ public class Subscription1d {
     weak var objectToReset: AnyObject!
     
     public func update(deletions: [Int], insertions: [Int], updates: [Int]) {
+        let _ = Resetable.downgradeReset1d(obj: self.objectToReset)?(deletions, insertions, updates)
         fns.array = fns.array.filter { (fn) -> Bool in
             return fn(deletions, insertions, updates) == .keep
         }
     }
     public func subscribe(_ fn: @escaping Fn) {
-        var resultFn = fn
-        if let resetFn = Resetable.downgradeReset1d(obj: self.objectToReset) {
-            resultFn = { deletions, insertions, updates -> DeleteOrKeep in
-                let _ = resetFn(deletions, insertions, updates)
-                return fn(deletions, insertions, updates)
-            }
-        }
-        self.fns.array.append(resultFn)
+        self.fns.array.append(fn)
     }
 }
 

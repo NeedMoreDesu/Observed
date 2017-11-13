@@ -23,7 +23,6 @@ public class Callback2d: Callback0d {
             guard let observed = observed else {
                 return .delete
             }
-            let _ = Resetable.downgradeReset0d(obj: observed.obj as AnyObject)?()
             observed.callback.fullUpdate.update()
             return .keep
         }
@@ -31,12 +30,12 @@ public class Callback2d: Callback0d {
             guard let observed = observed else {
                 return .delete
             }
-            let _ = Resetable.downgradeReset2d(obj: observed.obj as AnyObject)?(deletions, insertions, updates, sectionDeletions, sectionInsertions)
-            if let Callback = observed.callback as? Callback2d {
-                Callback.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions)
-            } else if let Callback = observed.callback as? Callback1d {
+            
+            if let callback = observed.callback as? Callback2d {
+                callback.changes.update(deletions: deletions, insertions: insertions, updates: updates, sectionDeletions: sectionDeletions, sectionInsertions: sectionInsertions)
+            } else if let callback = observed.callback as? Callback1d {
                 let updates = deletions.map { $0.section } + insertions.map { $0.section } + updates.map { $0.section }
-                Callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: updates)
+                callback.changes.update(deletions: sectionDeletions, insertions: sectionInsertions, updates: updates)
             } else {
                 observed.callback.fullUpdate.update()
             }
@@ -65,6 +64,7 @@ public class Callback2d: Callback0d {
             })
         }
         
+        var fullUpdateLock = 0
         self.fullUpdate.subscribe { () -> DeleteOrKeep in
             switch tableViewGetter() {
             case .delete:
@@ -92,8 +92,12 @@ public class Callback2d: Callback0d {
                 if controlReftesh {
                     CATransaction.begin()
                     CATransaction.setCompletionBlock({
-                        tableView.reloadData()
+                        fullUpdateLock -= 1
+                        if fullUpdateLock == 0 {
+                            tableView.reloadData()
+                        }
                     })
+                    fullUpdateLock += 1
                 }
                 
                 tableView.beginUpdates()

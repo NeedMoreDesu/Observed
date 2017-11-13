@@ -24,7 +24,6 @@ public class Callback1d: Callback0d {
             guard let observed = observed else {
                 return .delete
             }
-            let _ = Resetable.downgradeReset0d(obj: observed.obj as AnyObject)?()
             observed.callback.fullUpdate.update()
             return .keep
         }
@@ -32,9 +31,8 @@ public class Callback1d: Callback0d {
             guard let observed = observed else {
                 return .delete
             }
-            let _ = Resetable.downgradeReset1d(obj: observed.obj as AnyObject)?(deletions, insertions, updates)
-            if let Callback = observed.callback as? Callback1d {
-                Callback.changes.update(deletions: deletions, insertions: insertions, updates: updates)
+            if let callback = observed.callback as? Callback1d {
+                callback.changes.update(deletions: deletions, insertions: insertions, updates: updates)
             } else {
                 observed.callback.fullUpdate.update()
             }

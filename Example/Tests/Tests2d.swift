@@ -53,7 +53,7 @@ class Tests2d: QuickSpec {
                 expect(b.obj.equal2d(expectedUpdatedValue)) == true
             }
             it("expected updating behaviour") {
-                let expectedUpdatedValue = [[1.5, 2.5, 3.5, 9.5], [40.5, 50.5, 10.5], [600.5], [7000.5, 8000.5], [123.5]]
+                let expectedUpdatedValue = [[1.5, 2.5, 3.5, 9.5], [123.5], [40.5, 50.5, 10.5], [600.5], [7000.5, 8000.5]]
                 cleanupState()
                 b.callback.changes.subscribe({ (_, _, _, _, _) -> DeleteOrKeep in
                     expect(b.obj.equal2d(expectedUpdatedValue)) == true
@@ -62,10 +62,12 @@ class Tests2d: QuickSpec {
                 expect(b.obj.equal2d(expectedDefaultValue)) == true
                 arr[0].append(9)
                 arr[1].append(10)
-                arr.append([123])
+                arr.insert([123], at: 1)
                 expect(b.obj.equal2d(expectedDefaultValue)) == false // expected broken state before update
                 expect(bNoStore.obj.equal2d(expectedUpdatedValue)) == true
-                a.callback.changes.update(deletions: [], insertions: [Index2d(section:0, row: 3), Index2d(section:1, row: 2)], updates: [], sectionDeletions: [], sectionInsertions: [5])
+                a.callback.changes.update(deletions: [], insertions: [Index2d(section:0, row: 3), Index2d(section:1, row: 2)], updates: [], sectionDeletions: [], sectionInsertions: [1])
+                print(a.obj.allObjects2d())
+                print(b.obj.allObjects2d())
                 expect(b.obj.equal2d(expectedUpdatedValue)) == true
             }
             it("expected fullupdating behaviour 2") {
