@@ -25,6 +25,7 @@
 		A12417C11F9F86CD00430F04 /* Storyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12417C01F9F86CD00430F04 /* Storyboards.swift */; };
 		A149D4F51FB8E9EE009F905F /* Tests2d.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D746DA1FB227DB008CA571 /* Tests2d.swift */; };
 		A149D4F61FB8E9F1009F905F /* Tests1d.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D746D91FB227DB008CA571 /* Tests1d.swift */; };
+		A15B9D501FB9165200E7C3A8 /* TimestampDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B9D4F1FB9165200E7C3A8 /* TimestampDatabase.swift */; };
 		A16D3C411F993A2D009D2AE7 /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D3C401F993A2D009D2AE7 /* CoreData.swift */; };
 		A16D3C431F9946DE009D2AE7 /* DBTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D3C421F9946DE009D2AE7 /* DBTimestamp.swift */; };
 		A1BCBC191F99381300A30D32 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A1BCBC171F99381300A30D32 /* Model.xcdatamodeld */; };
@@ -70,6 +71,7 @@
 		A12417B81F9F730600430F04 /* ApplicationStartRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStartRouter.swift; sourceTree = "<group>"; };
 		A12417BE1F9F773C00430F04 /* TimestampGateway.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampGateway.swift; sourceTree = "<group>"; };
 		A12417C01F9F86CD00430F04 /* Storyboards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storyboards.swift; sourceTree = "<group>"; };
+		A15B9D4F1FB9165200E7C3A8 /* TimestampDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampDatabase.swift; sourceTree = "<group>"; };
 		A16D3C401F993A2D009D2AE7 /* CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreData.swift; sourceTree = "<group>"; };
 		A16D3C421F9946DE009D2AE7 /* DBTimestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBTimestamp.swift; sourceTree = "<group>"; };
 		A1BCBC181F99381300A30D32 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -202,8 +204,8 @@
 		A12417A81F9F551000430F04 /* Intermediate layer */ = {
 			isa = PBXGroup;
 			children = (
-				A12417BC1F9F76C400430F04 /* Gateways */,
 				A12417BD1F9F770F00430F04 /* Presenters */,
+				A12417BC1F9F76C400430F04 /* Gateways */,
 			);
 			name = "Intermediate layer";
 			sourceTree = "<group>";
@@ -213,6 +215,7 @@
 			children = (
 				A12417AA1F9F557B00430F04 /* UI */,
 				A1BCBC161F99374A00A30D32 /* CoreData */,
+				A15B9D4E1FB9163900E7C3A8 /* Database */,
 			);
 			name = "Outer Circle";
 			sourceTree = "<group>";
@@ -270,6 +273,14 @@
 				A12417AE1F9F56A100430F04 /* FirstScreenPresenter.swift */,
 			);
 			name = Presenters;
+			sourceTree = "<group>";
+		};
+		A15B9D4E1FB9163900E7C3A8 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				A15B9D4F1FB9165200E7C3A8 /* TimestampDatabase.swift */,
+			);
+			name = Database;
 			sourceTree = "<group>";
 		};
 		A1BCBC161F99374A00A30D32 /* CoreData */ = {
@@ -542,6 +553,7 @@
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				A12417B71F9F67BE00430F04 /* DependencyInjection.swift in Sources */,
 				A12417B11F9F56B900430F04 /* FirstScreenUseCase.swift in Sources */,
+				A15B9D501FB9165200E7C3A8 /* TimestampDatabase.swift in Sources */,
 				A12417C11F9F86CD00430F04 /* Storyboards.swift in Sources */,
 				A12417B31F9F56C400430F04 /* Timestamp.swift in Sources */,
 				A1BCBC191F99381300A30D32 /* Model.xcdatamodeld in Sources */,

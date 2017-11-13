@@ -16,35 +16,33 @@ class FirstScreenVC: UIViewController, FirstScreenView, UITableViewDelegate, UIT
 
     //MARK:- FirstScreenView Interface
     var presenter: FirstScreenPresenter!
-
-    var observed: Observed2d<FirstScreenCellModel>! {
-        didSet {
-            self.observed.callback.subscribeTableView(tableViewGetter: { [weak self] () -> TableViewOrDeleteOrKeep in
-                guard let `self` = self else {
-                    // if this screen is dead - remove callback
-                    return .delete
-                }
-                guard let tableView = self.tableView else {
-                    // if tableview is not yet here, keep callback alive
-                    return .keep
-                }
-                return .tableView(tableView)
-            })
+    
+    func subscribe() {
+        let getter = { [weak self] () -> TableViewOrDeleteOrKeep in
+            guard let `self` = self else {
+                // if this screen is dead - remove callback
+                return .delete
+            }
+            guard let tableView = self.tableView else {
+                // if tableview is not yet here, keep callback alive
+                return .keep
+            }
+            return .tableView(tableView)
         }
+        self.presenter.observed.callback.subscribeTableView(tableViewGetter: getter)
     }
-    var sectionModels: GeneratedSeq<FirstScreenSectionModel>!
 
     //MARK:- table view data source
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.observed.obj.count
+        return self.presenter.observed.obj.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.observed.obj[section].count
+        return self.presenter.observed.obj[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellModel = self.observed.obj[indexPath.section][indexPath.row]
+        let cellModel = self.presenter.observed.obj[indexPath.section][indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "main", for: indexPath)
         
         cell.textLabel?.text = cellModel.cellTitle
@@ -53,7 +51,7 @@ class FirstScreenVC: UIViewController, FirstScreenView, UITableViewDelegate, UIT
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let sectionModel = self.sectionModels[section]
+        let sectionModel = self.presenter.sectionModels.obj[section]
         return sectionModel.sectionTitle
     }
     

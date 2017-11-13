@@ -7,6 +7,7 @@
 
 import Foundation
 import LazySeq
+import UIKit
 
 public typealias Observed1d<Type> = Observed<GeneratedSeq<Type>, Callback1d>
 
@@ -39,6 +40,46 @@ public class Callback1d: Callback0d {
             }
 
             return .keep
+        }
+    }
+    
+    public func subscribeTableView(tableViewGetter: @escaping (() -> TableViewOrDeleteOrKeep), startingRow: Int = 0, section: Int = 0) {
+        func mapIndexPaths(_ rows: [Int]) -> [IndexPath] {
+            return rows.map({ (section) -> IndexPath in
+                return IndexPath(row: section + startingRow, section: section)
+            })
+        }
+        
+        self.fullUpdate.subscribe { () -> DeleteOrKeep in
+            switch tableViewGetter() {
+            case .delete:
+                return .delete
+            case .keep:
+                return .keep
+            case .tableView(let tableView):
+                tableView.reloadData()
+                return .keep
+            }
+        }
+        self.changes.subscribe { (deletions, insertions, updates) -> DeleteOrKeep in
+            switch tableViewGetter() {
+            case .delete:
+                return .delete
+            case .keep:
+                return .keep
+            case .tableView(let tableView):
+                let mappedDeletions = mapIndexPaths(deletions)
+                let mappedInsertions = mapIndexPaths(insertions)
+                let mappedUpdates = mapIndexPaths(updates)
+                
+                tableView.beginUpdates()
+                tableView.deleteRows(at: mappedDeletions, with: .fade)
+                tableView.insertRows(at: mappedInsertions, with: .automatic)
+                tableView.reloadRows(at: mappedUpdates, with: .automatic)
+                tableView.endUpdates()
+                
+                return .keep
+            }
         }
     }
 }

@@ -28,6 +28,7 @@ struct DependencyInjection {
         self.setupPresenters()
         self.setupUseCases()
         self.setupRepositories()
+        self.setupDatabases()
     }
     
     func setupRouters() {
@@ -69,8 +70,18 @@ struct DependencyInjection {
     }
     
     func setupRepositories() {
-        self.container.register(TimestampRouter.self) { (_) -> TimestampRouter in
-            return TimestampGateway()
+        self.container.register(TimestampRouter.self) { (r) -> TimestampRouter in
+            let repo = TimestampGateway()
+            
+            repo.database = r.resolve(TimestampDatabaseProtocol.self)
+            
+            return repo
+        }
+    }
+    
+    func setupDatabases() {
+        self.container.register(TimestampDatabaseProtocol.self) { (_) -> TimestampDatabaseProtocol in
+            return TimestampDatabase()
         }
     }
 }

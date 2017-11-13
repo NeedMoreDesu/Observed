@@ -10,31 +10,28 @@ import Foundation
 import Observed
 import LazySeq
 
+protocol TimestampDatabaseProtocol: class {
+    func observed() -> Observed2d<Timestamp>
+    func sections() -> Observed1d<TimestampSection>
+    func createTimestamp() -> Timestamp
+    func deleteAt(indexPath: IndexPath)
+}
+
 class TimestampGateway: TimestampRouter {
-    private let databaseObserved = DBTimestamp.createObserved()
-    private func toTimestampEntity(dbobj: DBTimestamp) -> Timestamp {
-        return Timestamp(time: dbobj.time!)
-    }
+    weak var database: TimestampDatabaseProtocol! { didSet { self.setup() } }
     
-    func observed() -> Observed2d<Timestamp> {
-        return self.databaseObserved.map2d(self.toTimestampEntity)
-    }
-    
-    func sectionSeconds() -> GeneratedSeq<Seconds> {
-        return self.databaseObserved.obj.map({ (section) -> Seconds in
-            let second = section.first()?.second ?? 0
-            return Seconds(value: Int(second))
-        })
+    var observed: Observed2d<Timestamp>!
+    var sections: Observed1d<TimestampSection>!
+    func setup() {
+        self.observed = self.database.observed()
+        self.sections = self.database.sections()
     }
     
     func createTimestamp() -> Timestamp {
-        let dbTimestamp = DBTimestamp.create()
-        CoreData.shared.save()
-        return toTimestampEntity(dbobj: dbTimestamp)
+        return self.database.createTimestamp()
     }
     
-    func deleteTimestampAt(indexPath: IndexPath) {
-        let item = self.databaseObserved.obj[indexPath.section][indexPath.row]
-        item.delete()
+    func deleteAt(indexPath: IndexPath) {
+        self.database.deleteAt(indexPath: indexPath)
     }
 }

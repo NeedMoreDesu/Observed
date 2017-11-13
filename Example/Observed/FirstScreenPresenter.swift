@@ -20,31 +20,34 @@ struct FirstScreenSectionModel {
 
 protocol FirstScreenView: class {
     var presenter: FirstScreenPresenter! { get set }
-    var observed: Observed2d<FirstScreenCellModel>! { get set }
-    var sectionModels: GeneratedSeq<FirstScreenSectionModel>! { get set }
+    func subscribe()
 }
 
 protocol FirstScreenPresenter: class {
     weak var view: FirstScreenView! { get set }
     
+    var observed: Observed2d<FirstScreenCellModel>! { get }
+    var sectionModels: Observed1d<FirstScreenSectionModel>! { get }
+
     func cellClickedAt(indexPath: IndexPath)
 }
 
 class FirstScreenPresenterImplementation: FirstScreenPresenter, FirstScreenOutput {
-    var observed: Observed2d<Timestamp>!
-    var sectionSeconds: GeneratedSeq<Seconds>!
-    
     var useCase: FirstScreenUseCase!
     weak var view: FirstScreenView! { didSet { self.setup() } }
     
+    var observed: Observed2d<FirstScreenCellModel>!
+    var sectionModels: Observed1d<FirstScreenSectionModel>!
+    
     func setup() {
-        view.observed = observed.map2d { (timestamp) -> FirstScreenCellModel in
+        self.observed = self.useCase.observed.map2d { (timestamp) -> FirstScreenCellModel in
             let cellModel = FirstScreenCellModel(cellTitle: "\(timestamp.time)")
             return cellModel
         }
-        view.sectionModels = sectionSeconds.map { (seconds) -> FirstScreenSectionModel in
-            return FirstScreenSectionModel(sectionTitle: "\(seconds.value)s")
+        self.sectionModels = self.useCase.sections.map1d { (section) -> FirstScreenSectionModel in
+            return FirstScreenSectionModel(sectionTitle: "\(section.second)s, count: \(section.count)")
         }
+        self.view.subscribe()
     }
     
     func cellClickedAt(indexPath: IndexPath) {

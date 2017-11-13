@@ -45,7 +45,7 @@ public class Callback2d: Callback0d {
         }
     }
     
-    public func subscribeTableView(tableViewGetter: @escaping (() -> TableViewOrDeleteOrKeep), startingRows: [Int] = [], startingSection: Int = 0) {
+    public func subscribeTableView(tableViewGetter: @escaping (() -> TableViewOrDeleteOrKeep), startingRows: [Int] = [], startingSection: Int = 0, controlReftesh: Bool = true) {
         func startingRowForSection(_ section: Int) -> Int {
             if section < startingRows.count {
                 return startingRows[section]
@@ -89,6 +89,12 @@ public class Callback2d: Callback0d {
                 let mappedSectionDeletions = mapSections(sectionDeletions)
                 let mappedSectionInsertions = mapSections(sectionInsertions)
                 
+                if controlReftesh {
+                    CATransaction.begin()
+                    CATransaction.setCompletionBlock({
+                        tableView.reloadData()
+                    })
+                }
                 
                 tableView.beginUpdates()
                 tableView.deleteSections(IndexSet(mappedSectionDeletions), with: .fade)
@@ -97,6 +103,10 @@ public class Callback2d: Callback0d {
                 tableView.insertRows(at: mappedInsertions, with: .automatic)
                 tableView.reloadRows(at: mappedUpdates, with: .automatic)
                 tableView.endUpdates()
+                
+                if controlReftesh {
+                    CATransaction.commit()
+                }
 
                 return .keep
             }
